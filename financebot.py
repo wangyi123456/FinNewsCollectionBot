@@ -27,22 +27,22 @@ rss_feeds = {
         "36氪":"https://36kr.com/feed",   
         },
     "🇨🇳 中国经济": {
-        "香港經濟日報":"https://www.hket.com/rss/china",
+        # "香港經濟日報":"https://www.hket.com/rss/china",
         "东方财富":"http://rss.eastmoney.com/rss_partener.xml",
-        "百度股票焦点":"http://news.baidu.com/n?cmd=1&class=stock&tn=rss&sub=0",
-        "中新网":"https://www.chinanews.com.cn/rss/finance.xml",
+        # "百度股票焦点":"http://news.baidu.com/n?cmd=1&class=stock&tn=rss&sub=0",
+        # "中新网":"https://www.chinanews.com.cn/rss/finance.xml",
         "国家统计局-最新发布":"https://www.stats.gov.cn/sj/zxfb/rss.xml",
     },
       "🇺🇸 美国经济": {
         "华尔街日报 - 经济":"https://feeds.content.dowjones.io/public/rss/WSJcomUSBusiness",
-        "华尔街日报 - 市场":"https://feeds.content.dowjones.io/public/rss/RSSMarketsMain",
-        "MarketWatch美股": "https://www.marketwatch.com/rss/topstories",
-        "ZeroHedge华尔街新闻": "https://feeds.feedburner.com/zerohedge/feed",
-        "ETF Trends": "https://www.etftrends.com/feed/",
+        # "华尔街日报 - 市场":"https://feeds.content.dowjones.io/public/rss/RSSMarketsMain",
+        # "MarketWatch美股": "https://www.marketwatch.com/rss/topstories",
+        # "ZeroHedge华尔街新闻": "https://feeds.feedburner.com/zerohedge/feed",
+        # "ETF Trends": "https://www.etftrends.com/feed/",
     },
     "🌍 世界经济": {
         "华尔街日报 - 经济":"https://feeds.content.dowjones.io/public/rss/socialeconomyfeed",
-        "BBC全球经济": "http://feeds.bbci.co.uk/news/business/rss.xml",
+        # "BBC全球经济": "http://feeds.bbci.co.uk/news/business/rss.xml",
     },
 }
 
@@ -129,17 +129,32 @@ def summarize(text):
         model="deepseek-chat",
         messages=[
             {"role": "system", "content": """
-             你是一名专业的财经新闻分析师，请根据以下新闻内容，按照以下步骤完成任务：
-             1. 提取新闻中涉及的主要行业和主题，找出近1天涨幅最高的3个行业或主题，以及近3天涨幅较高且此前2周表现平淡的3个行业/主题。（如新闻未提供具体涨幅，请结合描述和市场情绪推测热点）
-             2. 针对每个热点，输出：
-                - 催化剂：分析近期上涨的可能原因（政策、数据、事件、情绪等）。
-                - 复盘：梳理过去3个月该行业/主题的核心逻辑、关键动态与阶段性走势。
-                - 展望：判断该热点是短期炒作还是有持续行情潜力。
-             3. 将以上分析整合为一篇1500字以内的财经热点摘要，逻辑清晰、重点突出，适合专业投资者阅读。
+             你是一名关注宏观趋势和热点变化的财经分析师。请根据以下新闻内容完成分析：
+            1. 这条新闻说明世界层面正在发生什么变化？国家层面有哪些重要动向？
+            2. 最近什么事情正在变热？哪些行业、资产或主题受到关注？背后原因是什么（政策、数据、国际事件、市场情绪等）？
+            3. 这些变化对普通人意味着什么？投资上更应关注哪些方向？需要警惕哪些风险？这是短期波动还是可能持续一段时间？
+            4. 最后写成800-1000字以内的摘要，结构清晰，语言通俗，重点明确，避免使用晦涩词语。
              """},
             {"role": "user", "content": text}
         ]
     )
+
+# def summarize(text):
+#     completion = openai_client.chat.completions.create(
+#         model="deepseek-chat",
+#         messages=[
+#             {"role": "system", "content": """
+#              你是一名专业的财经新闻分析师，请根据以下新闻内容，按照以下步骤完成任务：
+#              1. 提取新闻中涉及的主要行业和主题，找出近1天涨幅最高的3个行业或主题，以及近3天涨幅较高且此前2周表现平淡的3个行业/主题。（如新闻未提供具体涨幅，请结合描述和市场情绪推测热点）
+#              2. 针对每个热点，输出：
+#                 - 催化剂：分析近期上涨的可能原因（政策、数据、事件、情绪等）。
+#                 - 复盘：梳理过去3个月该行业/主题的核心逻辑、关键动态与阶段性走势。
+#                 - 展望：判断该热点是短期炒作还是有持续行情潜力。
+#              3. 将以上分析整合为一篇1000字以内的财经热点摘要，逻辑清晰、重点突出，适合专业投资者阅读。
+#              """},
+#             {"role": "user", "content": text}
+#         ]
+#     )    
     return completion.choices[0].message.content.strip()
 
 # 发送微信推送
