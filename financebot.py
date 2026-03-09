@@ -20,30 +20,47 @@ openai_client = OpenAI(api_key=openai_api_key, base_url="https://api.deepseek.co
 
 # RSS源地址列表
 rss_feeds = {
-    "💲 华尔街见闻":{
-        "华尔街见闻":"https://dedicated.wallstreetcn.com/rss.xml",      
+    "💲 华尔街见闻": {
+        "华尔街见闻": "https://dedicated.wallstreetcn.com/rss.xml",
     },
-    "💻 36氪":{
-        "36氪":"https://36kr.com/feed",   
-        },
+    "📰 华尔街日报（中文）": {
+        # WSJ 中文版官方 RSS
+        "华尔街日报（中文）": "https://cn.wsj.com/zh-hans/rss",
+    },
+    "💹 彭博社（亚洲）": {
+        # 通过 Google News 搜索 Bloomberg 亚洲内容（可用且无需登录）
+        "彭博社（亚洲）": "https://news.google.com/rss/search?q=site%3Abloomberg.com+asia&hl=zh-CN&gl=CN&ceid=CN%3Azh-Hans",
+    },
+    "🌏 路透（中国）": {
+        # 通过 Google News 搜索 Reuters 中国内容（可用且无需登录）
+        "路透（中国）": "https://news.google.com/rss/search?q=site%3Areuters.com+china&hl=zh-CN&gl=CN&ceid=CN%3Azh-Hans",
+    },
+    "📰 联合早报": {
+        # 通过 Google News 搜索 Zaobao（联合早报）内容
+        "联合早报": "https://news.google.com/rss/search?q=site%3Azaobao.com.sg&hl=zh-CN&gl=CN&ceid=CN%3Azh-Hans",
+    },
+    "🏦 高盛研究院": {
+        # 通过 Google News 搜索高盛研究院发布内容
+        "高盛研究院": "https://news.google.com/rss/search?q=site%3Agspublishing.com&hl=zh-CN&gl=CN&ceid=CN%3Azh-Hans",
+    },
     "🇨🇳 中国经济": {
         # "香港經濟日報":"https://www.hket.com/rss/china",
-        "东方财富":"http://rss.eastmoney.com/rss_partener.xml",
+        # "东方财富":"http://rss.eastmoney.com/rss_partener.xml",
         # "百度股票焦点":"http://news.baidu.com/n?cmd=1&class=stock&tn=rss&sub=0",
         # "中新网":"https://www.chinanews.com.cn/rss/finance.xml",
-        "国家统计局-最新发布":"https://www.stats.gov.cn/sj/zxfb/rss.xml",
+        "国家统计局-最新发布": "https://www.stats.gov.cn/sj/zxfb/rss.xml",
     },
-      "🇺🇸 美国经济": {
-        "华尔街日报 - 经济":"https://feeds.content.dowjones.io/public/rss/WSJcomUSBusiness",
-        # "华尔街日报 - 市场":"https://feeds.content.dowjones.io/public/rss/RSSMarketsMain",
-        # "MarketWatch美股": "https://www.marketwatch.com/rss/topstories",
-        # "ZeroHedge华尔街新闻": "https://feeds.feedburner.com/zerohedge/feed",
-        # "ETF Trends": "https://www.etftrends.com/feed/",
-    },
-    "🌍 世界经济": {
-        "华尔街日报 - 经济":"https://feeds.content.dowjones.io/public/rss/socialeconomyfeed",
-        # "BBC全球经济": "http://feeds.bbci.co.uk/news/business/rss.xml",
-    },
+    # "🇺🇸 美国经济": {
+    #     "华尔街日报 - 经济": "https://feeds.content.dowjones.io/public/rss/WSJcomUSBusiness",
+    #     # "华尔街日报 - 市场":"https://feeds.content.dowjones.io/public/rss/RSSMarketsMain",
+    #     # "MarketWatch美股": "https://www.marketwatch.com/rss/topstories",
+    #     # "ZeroHedge华尔街新闻": "https://feeds.feedburner.com/zerohedge/feed",
+    #     # "ETF Trends": "https://www.etftrends.com/feed/",
+    # },
+    # "🌍 世界经济": {
+    #     "华尔街日报 - 经济": "https://feeds.content.dowjones.io/public/rss/socialeconomyfeed",
+    #     # "BBC全球经济": "http://feeds.bbci.co.uk/news/business/rss.xml",
+    # },
 }
 
 # 获取北京时间
@@ -87,7 +104,7 @@ def fetch_feed_with_retry(url, retries=3, delay=5):
     return None
 
 # 获取RSS内容（爬取正文但不展示）
-def fetch_rss_articles(rss_feeds, max_articles=10):
+def fetch_rss_articles(rss_feeds, max_articles=20):
     news_data = {}
     analysis_text = ""  # 用于AI分析的正文内容
 
@@ -129,11 +146,11 @@ def summarize(text):
         model="deepseek-chat",
         messages=[
             {"role": "system", "content": """
-             你是一名关注宏观趋势和热点变化的财经分析师。请根据以下新闻内容完成分析：
-            1. 这条新闻说明世界层面正在发生什么变化？国家层面有哪些重要动向？
-            2. 最近什么事情正在变热？哪些行业、资产或主题受到关注？背后原因是什么（政策、数据、国际事件、市场情绪等）？
-            3. 这些变化对普通人意味着什么？投资上更应关注哪些方向？需要警惕哪些风险？这是短期波动还是可能持续一段时间？
-            4. 最后写成800-1000字以内的摘要，结构清晰，语言通俗，重点明确，避免使用晦涩词语。
+             你是华尔街资深分析师。只用中文，严格按以下格式提炼今天彭博/路透/WSJ的核心论断（每篇80–150字）：  
+            【来源：媒体名】  
+             核心判断：  
+                分歧点：  
+            只提取观点、预测、立场，还原真实的报道，不要自己添加或者想象。忽略广告和无关内容。
              """},
             {"role": "user", "content": text}
         ]
